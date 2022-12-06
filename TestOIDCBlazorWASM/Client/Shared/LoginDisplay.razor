@@ -1,24 +1,24 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.Extensions.Options;
 
 @inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
+@inject IOptionsSnapshot<RemoteAuthenticationOptions<ApiAuthorizationProviderOptions>> Options
 
 <AuthorizeView>
-    <Authorized>
-        <a href="authentication/profile">Hello, @context.User.Identity?.Name !</a>
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
-    </Authorized>
-    <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
-    </NotAuthorized>
+  <Authorized>
+    <a href="authentication/profile">Hello, @context.User.Identity?.Name !</a>
+    <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+  </Authorized>
+  <NotAuthorized>
+    <a href="authentication/register">Register</a>
+    <a href="authentication/login">Log in</a>
+  </NotAuthorized>
 </AuthorizeView>
 
-@code{
-    private async Task BeginSignOut(MouseEventArgs args)
-    {
-        await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
-    }
+@code {
+  private void BeginSignOut(MouseEventArgs args)
+  {
+    Navigation.NavigateToLogout(Options.Get(Microsoft.Extensions.Options.Options.DefaultName).AuthenticationPaths.LogOutPath);
+  }
 }
